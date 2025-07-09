@@ -1,0 +1,20 @@
+mermaid`
+sequenceDiagram
+    participant MES as MES (Manufacturing Execution System)
+    participant ClockSync as Clock Sync Protocol (TSN/NTP)
+    participant Robot as Robotic Arm
+    participant Tool as Process Tool (Laser/Etch)
+    participant Sensor as Inline Sensors
+    participant Logger as Data Logger
+
+    MES->>MES: ① Wafer ID scanned, recipe loaded
+    MES->>ClockSync: ② Sync tool clocks (TSN/PTP)
+    ClockSync->>Robot: Sync with robotic arm
+    ClockSync->>Tool: Sync with process tool
+    Robot->>Tool: ③ Transfer wafer
+    Tool->>Tool: ④ Execute recipe steps
+    Tool->>Sensor: ⑤ Report sensor data in real-time
+    Tool->>Robot: ⑥ Transfer wafer out
+    Tool->>Logger: ⑦ Log data to MES
+
+    Note over ClockSync,Tool: Desync here causes cascading failure in all steps
