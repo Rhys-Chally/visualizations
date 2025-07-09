@@ -1,0 +1,29 @@
+graph LR
+   A[1.Wafer ID scan and recipe load] --> B[2.Synchronize tool clocks]
+   B --> C{3.Wafer transfer begins}
+   C -->|Robotic arm picks wafer at precise time| D[4.Execute recipe steps]
+   D --> E{5.Sensor data monitoring}
+   E -->|Aligned with process timing for control| F[6.Complete recipe and transfer wafer]
+   F --> G[7.Log results to MES]
+  
+   C -.->|Early/late motion| H(Wafer misaligned or damage)
+   D -.->|Recipe misalignment| I(Overexposure or underprocessing)
+   E -.->|Time shift| J(Incorrect alerts or process drift unobserved)
+   F -.->|Post-process action occurs too early/late| K
+   G -.->|Timestamp error| L(Data integrity failure)
+
+
+   style A fill:#bbf,stroke:#333,stroke-width:2px
+   style B fill:#bbf,stroke:#333,stroke-width:2px
+   style C fill:#87CEEB,stroke:#333,stroke-width:2px
+   style D fill:#bbf,stroke:#333,stroke-width:2px
+   style E fill:#87CEEB,stroke:#333,stroke-width:2px
+   style F fill:#bbf,stroke:#333,stroke-width:2px
+   style G fill:#bbf,stroke:#333,stroke-width:2px
+
+
+   style H fill:#ff7,stroke:#333,stroke-width:2px
+   style I fill:#ff7,stroke:#333,stroke-width:2px
+   style J fill:#ff7,stroke:#333,stroke-width:2px
+   style K fill:#ff7,stroke:#333,stroke-width:2px
+   style L fill:#ff7,stroke:#333,stroke-width:2px
