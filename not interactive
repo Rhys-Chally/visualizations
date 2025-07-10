@@ -1,0 +1,43 @@
+from graphviz import Digraph
+from IPython.display import Image
+
+dot = Digraph('Tool Timing Sync Problem', format='png')
+
+# General graph attributes
+dot.attr(rankdir='TB', size='10,10')
+dot.attr('node', shape='box', style='filled', fontname='Helvetica')
+
+# Nodes
+dot.node('1', 'Wafer ID Scan\n+ Recipe Load', fillcolor='#cce5ff')  # Light Blue
+dot.node('2', 'Tool Clock Sync\n(TSN/NTP/PTP)', fillcolor='#ffd699')  # Gold/Yellow
+dot.node('3', 'Wafer Transfer\nby Robot Arm', fillcolor='#d5f5e3')  # Light Green
+dot.node('4', 'Execute Recipe\n(Laser/Etch)', fillcolor='#f8cecc')  # Light Red
+dot.node('5', 'Sensor Data Monitoring\n(Real-Time)', fillcolor='#d0e0e3')  # Gray Blue
+dot.node('6', 'Transfer Wafer Out\n(Complete Recipe)', fillcolor='#e2efda')  # Pale Green
+dot.node('7', 'Log Results to MES\n+ Timestamp', fillcolor='#deeaf6')  # Light Indigo
+
+# Central Sync Point with Radial Links
+dot.edge('1', '2', label='⚙️ Setup sync')
+dot.edge('2', '3', label='⚠️ Desync → Arm Timing Fault', color='red')
+dot.edge('3', '4', label='⚠️ Drift → Recipe Misfire', color='red')
+dot.edge('4', '5', label='⚠️ Sensor Lag → Missed Alerts', color='orange')
+dot.edge('5', '6', label='⚠️ Bad sequence timing', color='orange')
+dot.edge('6', '7', label='⚠️ Logging Error → Integrity Risk', color='darkred')
+
+# Loopback (if desired)
+dot.edge('7', '2', constraint='false', style='dashed', label='🔁 Retry if log mismatch', color='gray')
+
+# Custom Layout: group steps
+with dot.subgraph() as s:
+    s.attr(rank='same')  # Side-by-side
+    s.node('3')
+    s.node('5')
+
+with dot.subgraph() as s2:
+    s2.attr(rank='same')
+    s2.node('4')
+    s2.node('6')
+
+# Render & Show
+dot.render('tool_timing_sync_advanced_flowchart', cleanup=False)
+Image('tool_timing_sync_advanced_flowchart.png')
